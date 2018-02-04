@@ -1,0 +1,9 @@
+<fragment
+    android:id="@+id/fragment_posters"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:layout="@layout/movie_overview"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:name="com.example.ali.moviedb.Views.PosterFragment"/>
+

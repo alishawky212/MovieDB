@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MovieDB</string>
+
+    <string name="detail_fragment_key">DETAIL_FRAGMENT</string>
+
+    <string name="tmdb_posterpath_w185">https://image.tmdb.org/t/p/w185</string>
+</resources>
