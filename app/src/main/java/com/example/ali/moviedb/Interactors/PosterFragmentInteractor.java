@@ -48,7 +48,24 @@ public class PosterFragmentInteractor implements PosterFragmentMVP.InterActor {
     }
 
     @Override
-    public void getAverageMovies() {
+    public void getAverageMovies(String API, final OnLoadFinishedListener listener) {
+
+        Call<MoviesWrapper> call = tmDbServiceTopRated.getMovies(API);
+
+        call.enqueue(new Callback<MoviesWrapper>() {
+            @Override
+            public void onResponse(Call<MoviesWrapper> call, Response<MoviesWrapper> response) {
+                ArrayList<Movie> movies = (ArrayList<Movie>) response.body().getResults();
+
+                listener.onSuccess(movies);
+            }
+
+            @Override
+            public void onFailure(Call<MoviesWrapper> call, Throwable t) {
+                listener.onError();
+            }
+        });
+
 
     }
 

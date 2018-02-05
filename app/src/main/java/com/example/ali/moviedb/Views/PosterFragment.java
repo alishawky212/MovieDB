@@ -105,13 +105,13 @@ public class PosterFragment extends Fragment implements PosterFragmentMVP.View{
 
         switch (item.getItemId()) {
             case R.id.popl:
-//                updateSharedPrefrence(getString(R.string.tmdb_sort_pop_desc));
-//                getMoviesFromTMDb(getSortMethod());
+                presenter.updateSharedPreferance(getString(R.string.tmdb_sort_pop_desc));
+                presenter.getMovies();
                 return true;
 
             case R.id.rate:
-//                updateSharedPrefrence(getString(R.string.tmdb_sort_top_desc));
-//                getMoviesFromTMDb(getSortMethod());
+                presenter.updateSharedPreferance(getString(R.string.tmdb_sort_top_desc));
+                presenter.getMovies();
                 return true;
 
             case R.id.favor:
@@ -125,7 +125,6 @@ public class PosterFragment extends Fragment implements PosterFragmentMVP.View{
 
     @Override
     public void showMovies(ArrayList<Movie> movies) {
-
         adapter.updateData(movies);
     }
 
@@ -133,5 +132,11 @@ public class PosterFragment extends Fragment implements PosterFragmentMVP.View{
     public void showError() {
         Toast.makeText(getActivity(),"There Is Error Occurred",Toast.LENGTH_SHORT).show();
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.onDestroy();
     }
 }

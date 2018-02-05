@@ -15,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module
 public class APIModule {
 
-    public final String BASEURL = "https://api.themoviedb.org/";
+    private final String BASEURL = "https://api.themoviedb.org/";
 
     @Provides
     public OkHttpClient provideClinet (){

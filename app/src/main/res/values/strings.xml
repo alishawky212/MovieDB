@@ -4,4 +4,8 @@
     <string name="detail_fragment_key">DETAIL_FRAGMENT</string>
 
     <string name="tmdb_posterpath_w185">https://image.tmdb.org/t/p/w185</string>
+
+    <string name="tmdb_sort_pop_desc">popularity.desc</string>
+    <string name="tmdb_sort_top_desc">vote_average.desc</string>
+    <string name="pref_sort_method_key">SORT_METHOD</string>
 </resources>

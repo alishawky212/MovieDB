@@ -1,8 +1,10 @@
 package com.example.ali.moviedb.Persenters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 
 import com.example.ali.moviedb.Contracts.PosterFragmentMVP;
 import com.example.ali.moviedb.Models.Movie;
@@ -16,9 +18,9 @@ import java.util.ArrayList;
 
 public class PosterFragmentPresenter implements PosterFragmentMVP.Presenter,PosterFragmentMVP.InterActor.OnLoadFinishedListener {
 
-    PosterFragmentMVP.View view;
-    PosterFragmentMVP.InterActor interActor;
-    Context context;
+    private PosterFragmentMVP.View view;
+    private PosterFragmentMVP.InterActor interActor;
+    private Context context;
 
     public PosterFragmentPresenter(PosterFragmentMVP.View view, PosterFragmentMVP.InterActor interActor,Context context) {
         this.view = view;
@@ -31,9 +33,29 @@ public class PosterFragmentPresenter implements PosterFragmentMVP.Presenter,Post
 
         if (isNetworkAvailable())
         {
-            interActor.getPopularMovies(context.getString(R.string.APIKEY),this);
+            switch (getSortMethod()) {
+                case "vote_average.desc":
+                    interActor.getAverageMovies(context.getString(R.string.APIKEY), this);
+                    break;
+                case "popularity.desc":
+                    interActor.getPopularMovies(context.getString(R.string.APIKEY), this);
+                    break;
+            }
         }
 
+    }
+
+    @Override
+    public void onDestroy() {
+        view = null;
+    }
+
+    @Override
+    public void updateSharedPreferance(String sortMethod) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(context.getString(R.string.pref_sort_method_key), sortMethod);
+        editor.apply();
     }
 
     private boolean isNetworkAvailable() {
@@ -44,9 +66,14 @@ public class PosterFragmentPresenter implements PosterFragmentMVP.Presenter,Post
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    private String getSortMethod() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getString(context.getString(R.string.pref_sort_method_key),
+                context.getString(R.string.tmdb_sort_pop_desc));
+    }
+
     @Override
     public void onSuccess(ArrayList<Movie> movies) {
-
         view.showMovies(movies);
     }
 
