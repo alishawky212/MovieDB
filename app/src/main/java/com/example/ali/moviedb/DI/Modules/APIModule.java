@@ -2,6 +2,8 @@ package com.example.ali.moviedb.DI.Modules;
 
 import com.example.ali.moviedb.Contracts.APIServices;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
@@ -13,11 +15,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by ali on 2/4/2018.
  */
 @Module
+@Singleton
 public class APIModule {
 
     private final String BASEURL = "https://api.themoviedb.org/";
 
     @Provides
+    @Singleton
     public OkHttpClient provideClinet (){
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
 
@@ -27,6 +31,7 @@ public class APIModule {
     }
 
     @Provides
+    @Singleton
     public Retrofit provideRetrofit(String base_url, OkHttpClient okHttpClient){
         return new Retrofit.Builder()
                 .baseUrl(base_url)
@@ -44,5 +49,15 @@ public class APIModule {
     public APIServices.TMDbServiceTopRated provideTmDbServiceTopRated(){
 
         return provideRetrofit(BASEURL,provideClinet()).create(APIServices.TMDbServiceTopRated.class);
+    }
+
+    @Provides
+    public APIServices.TrailersService provideTrailersService() {
+        return provideRetrofit(BASEURL, provideClinet()).create(APIServices.TrailersService.class);
+    }
+
+    @Provides
+    public APIServices.ReviewsService provideReviewsService() {
+        return provideRetrofit(BASEURL, provideClinet()).create(APIServices.ReviewsService.class);
     }
 }

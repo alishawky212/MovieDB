@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -6,20 +7,19 @@
     android:baselineAligned="false"
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
-    tools:context=".Views.MainActivity"
-    >
-
+    tools:context=".Views.MainActivity">
 
     <fragment
         android:id="@+id/fragment_posters"
+        android:name="com.example.ali.moviedb.Views.PosterFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        tools:layout="@layout/movie_overview"
-        />
+        tools:layout="@layout/movie_overview" />
+
     <FrameLayout
         android:id="@+id/movie_details_container"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 </LinearLayout>

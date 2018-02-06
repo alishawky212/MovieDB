@@ -8,4 +8,23 @@
     <string name="tmdb_sort_pop_desc">popularity.desc</string>
     <string name="tmdb_sort_top_desc">vote_average.desc</string>
     <string name="pref_sort_method_key">SORT_METHOD</string>
+
+    <string name="parcel_movie">PARCEL_MOVIE</string>
+
+    <string name="description_movie_poster">Contains poster of movie</string>
+
+    <string name="heading_release_date">Release Date</string>
+    <string name="release_date">10–1–2000</string>
+    <string name="heading_vote_average">Vote Average</string>
+    <string name="vote_average">7.8/10</string>
+
+    <string name="example_overview">He play football with his friends and he got injury </string>
+
+    <string name="trailers">Trailers</string>
+    <string name="reviews">Reviews</string>
+    <string name="example_review">this is review</string>
+    <string name="no_summary_found">No summary was found</string>
+    <string name="no_release_date_found">No release date found</string>
+
+    <string name="fav_menu">Favorite</string>
 </resources>

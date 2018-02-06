@@ -14,6 +14,7 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.example.ali.moviedb.Adapters.PosterAdapter;
+import com.example.ali.moviedb.Contracts.OnPosterSelectedListener;
 import com.example.ali.moviedb.Contracts.PosterFragmentMVP;
 import com.example.ali.moviedb.DI.Modules.PosterFragmentModule;
 import com.example.ali.moviedb.Models.Movie;
@@ -75,6 +76,8 @@ public class PosterFragment extends Fragment implements PosterFragmentMVP.View{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Movie movie = (Movie) parent.getItemAtPosition(position);
                 Bundle bundle = new Bundle();
+                bundle.putParcelable(getResources().getString(R.string.parcel_movie), movie);
+                ((OnPosterSelectedListener) getActivity()).onPosterSelected(bundle);
             }
         });
 
@@ -126,6 +129,13 @@ public class PosterFragment extends Fragment implements PosterFragmentMVP.View{
     @Override
     public void showMovies(ArrayList<Movie> movies) {
         adapter.updateData(movies);
+        moviesssss = movies;
+//        if (getActivity().getFragmentManager().findFragmentById(R.id.movie_details_container) != null && adapter.getCount() > 0) {
+//            new Handler().post(new Runnable() {
+//                public void run() {
+//                    mGridView.performItemClick(mGridView.getAdapter().getView(0, null, null), 0, mGridView.getAdapter().getItemId(0));
+//                }
+//            });
     }
 
     @Override
