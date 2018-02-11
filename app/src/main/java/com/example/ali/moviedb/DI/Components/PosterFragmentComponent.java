@@ -13,6 +13,5 @@ import dagger.Subcomponent;
 @PosterFragmentScope
 @Subcomponent(modules = PosterFragmentModule.class)
 public interface PosterFragmentComponent {
-
     void inject(PosterFragment posterFragment);
 }

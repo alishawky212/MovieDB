@@ -66,4 +66,14 @@ public class PosterFragmentModule {
     public PosterAdapter provideAdapter(){
         return new PosterAdapter(mContext,new ArrayList<Movie>());
     }
+
+//    @Provides
+//    public APIServices.TMDbPopular provideTmDbPopular(Retrofit retrofit){
+//        return retrofit.create(APIServices.TMDbPopular.class);
+//    }
+//
+//    @Provides
+//    public APIServices.TMDbServiceTopRated provideTmDbServiceTopRated(Retrofit retrofit){
+//        return retrofit.create(APIServices.TMDbServiceTopRated.class);
+//    }
 }

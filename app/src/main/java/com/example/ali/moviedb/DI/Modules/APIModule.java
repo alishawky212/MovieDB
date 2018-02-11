@@ -39,18 +39,6 @@ public class APIModule {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
-
-    @Provides
-    public APIServices.TMDbPopular provideTmDbPopular(){
-       return provideRetrofit(BASEURL,provideClinet()).create(APIServices.TMDbPopular.class);
-    }
-
-    @Provides
-    public APIServices.TMDbServiceTopRated provideTmDbServiceTopRated(){
-
-        return provideRetrofit(BASEURL,provideClinet()).create(APIServices.TMDbServiceTopRated.class);
-    }
-
     @Provides
     public APIServices.TrailersService provideTrailersService() {
         return provideRetrofit(BASEURL, provideClinet()).create(APIServices.TrailersService.class);
@@ -59,5 +47,15 @@ public class APIModule {
     @Provides
     public APIServices.ReviewsService provideReviewsService() {
         return provideRetrofit(BASEURL, provideClinet()).create(APIServices.ReviewsService.class);
+    }
+
+    @Provides
+    public APIServices.TMDbPopular provideTmDbPopular() {
+        return provideRetrofit(BASEURL, provideClinet()).create(APIServices.TMDbPopular.class);
+    }
+
+    @Provides
+    public APIServices.TMDbServiceTopRated provideTmDbServiceTopRated() {
+        return provideRetrofit(BASEURL, provideClinet()).create(APIServices.TMDbServiceTopRated.class);
     }
 }

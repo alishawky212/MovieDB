@@ -6,6 +6,7 @@ import android.content.Context;
 import com.example.ali.moviedb.DI.Components.APPComponent;
 import com.example.ali.moviedb.DI.Components.DaggerAPPComponent;
 
+
 /**
  * Created by ali on 2/4/2018.
  */

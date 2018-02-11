@@ -44,6 +44,7 @@ public class PosterFragment extends Fragment implements PosterFragmentMVP.View{
     @Inject
     PosterAdapter adapter;
 
+
     private ArrayList<Movie> moviesssss;
 
     @Override
