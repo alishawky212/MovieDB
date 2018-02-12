@@ -1,5 +1,6 @@
 package com.example.ali.moviedb.Contracts;
 
+import com.example.ali.moviedb.Models.Movie;
 import com.example.ali.moviedb.Models.Review;
 import com.example.ali.moviedb.Models.Trailer;
 
@@ -27,6 +28,8 @@ public interface MovieDetailContracts {
 
         void getReviews(int id);
 
+        void saveMovie(Movie movie);
+
         void onDestroy();
 
     }
@@ -35,6 +38,8 @@ public interface MovieDetailContracts {
         void getTrailers(int id, String API, OnLoadTrailersFinishedListener listener);
 
         void getReviews(int id, String API, OnLoadReviewsFinishedListener listener);
+
+        void saveMovie(Movie movie);
 
         interface OnLoadTrailersFinishedListener {
 

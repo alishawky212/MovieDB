@@ -131,12 +131,6 @@ public class PosterFragment extends Fragment implements PosterFragmentMVP.View{
     public void showMovies(ArrayList<Movie> movies) {
         adapter.updateData(movies);
         moviesssss = movies;
-//        if (getActivity().getFragmentManager().findFragmentById(R.id.movie_details_container) != null && adapter.getCount() > 0) {
-//            new Handler().post(new Runnable() {
-//                public void run() {
-//                    mGridView.performItemClick(mGridView.getAdapter().getView(0, null, null), 0, mGridView.getAdapter().getItemId(0));
-//                }
-//            });
     }
 
     @Override

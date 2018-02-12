@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import dagger.Module;
 import dagger.Provides;
+import retrofit2.Retrofit;
 
 /**
  * Created by ali on 2/4/2018.
@@ -67,13 +68,15 @@ public class PosterFragmentModule {
         return new PosterAdapter(mContext,new ArrayList<Movie>());
     }
 
-//    @Provides
-//    public APIServices.TMDbPopular provideTmDbPopular(Retrofit retrofit){
-//        return retrofit.create(APIServices.TMDbPopular.class);
-//    }
-//
-//    @Provides
-//    public APIServices.TMDbServiceTopRated provideTmDbServiceTopRated(Retrofit retrofit){
-//        return retrofit.create(APIServices.TMDbServiceTopRated.class);
-//    }
+    @Provides
+    @PosterFragmentScope
+    public APIServices.TMDbPopular provideTmDbPopular(Retrofit retrofit) {
+        return retrofit.create(APIServices.TMDbPopular.class);
+    }
+
+    @Provides
+    @PosterFragmentScope
+    public APIServices.TMDbServiceTopRated provideTmDbServiceTopRated(Retrofit retrofit) {
+        return retrofit.create(APIServices.TMDbServiceTopRated.class);
+    }
 }

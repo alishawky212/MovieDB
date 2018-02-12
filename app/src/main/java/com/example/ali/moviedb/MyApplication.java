@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.example.ali.moviedb.DI.Components.APPComponent;
 import com.example.ali.moviedb.DI.Components.DaggerAPPComponent;
+import com.example.ali.moviedb.DI.Modules.RoomModule;
 
 
 /**
@@ -37,7 +38,7 @@ public class MyApplication extends Application {
         mContext = this;
         setInstance(this);
 
-        appComponent = DaggerAPPComponent.create();
+        appComponent = DaggerAPPComponent.builder().roomModule(new RoomModule(this)).build();
 
     }
 

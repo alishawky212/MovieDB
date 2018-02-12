@@ -3,6 +3,7 @@ package com.example.ali.moviedb.Persenters;
 import android.content.Context;
 
 import com.example.ali.moviedb.Contracts.MovieDetailContracts;
+import com.example.ali.moviedb.Models.Movie;
 import com.example.ali.moviedb.Models.Review;
 import com.example.ali.moviedb.Models.Trailer;
 import com.example.ali.moviedb.R;
@@ -38,6 +39,11 @@ public class MovieDetailPresenter implements MovieDetailContracts.MovieDetailPer
     }
 
     @Override
+    public void saveMovie(Movie movie) {
+        movieDetailInteractor.saveMovie(movie);
+    }
+
+    @Override
     public void onDestroy() {
 
         movieDetailView = null;
@@ -51,7 +57,7 @@ public class MovieDetailPresenter implements MovieDetailContracts.MovieDetailPer
 
     @Override
     public void onTrailersError() {
-        movieDetailView.ShowError("There IS Error Fetching Trailers");
+        movieDetailView.ShowError("There Is Error Fetching Trailers");
     }
 
     @Override

@@ -4,6 +4,9 @@ package com.example.ali.moviedb.Models;
  * Created by ali on 3/11/2017.
  */
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -15,7 +18,7 @@ import java.util.List;
 
 /** based on that http://stackoverflow.com/questions/5082122/passing-jsonobject-into-another-activity*/
 
-
+@Entity(tableName = "Movie")
 public class Movie implements Parcelable {
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
         public Movie createFromParcel(Parcel source) {
@@ -35,9 +38,11 @@ public class Movie implements Parcelable {
     private String backdropPath;
     @SerializedName("genre_ids")
     @Expose
+    @Ignore
     private List<Integer> genreIds = new ArrayList<Integer>();
     @SerializedName("id")
     @Expose
+    @PrimaryKey
     private Integer id;
     @SerializedName("original_language")
     @Expose
