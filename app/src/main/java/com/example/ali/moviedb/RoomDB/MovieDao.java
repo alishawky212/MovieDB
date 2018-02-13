@@ -9,6 +9,8 @@ import com.example.ali.moviedb.Models.Movie;
 
 import java.util.List;
 
+import io.reactivex.Maybe;
+
 /**
  * Created by ali on 2/11/2018.
  */
@@ -18,7 +20,11 @@ public interface MovieDao {
 
 
     @Insert
-    void insertAll(Movie... movies);
+    void insert(Movie... movies);
+
+    @Query("SELECT * FROM Movie WHERE id = :Id")
+    Maybe<Movie> ISFavorit(int Id);
+
 
     @Query("SELECT * FROM Movie")
     List<Movie> getAll();

@@ -66,6 +66,9 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
 
     @BindView(R.id.textview_overview)
     TextView mTvOverView;
+
+    MenuItem fav;
+
     @Inject
     MovieDetailContracts.MovieDetailPersenter movieDetailPersenter;
     List<Trailer> mTrailers;
@@ -189,11 +192,6 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
     }
 
     @Override
-    public void showMovieDetail() {
-
-    }
-
-    @Override
     public void showTrailers(ArrayList<Trailer> trailers) {
         if (trailers.size() > 0) {
             mTrailers = trailers;
@@ -219,10 +217,23 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
     }
 
     @Override
+    public void onFoundMovieInDataBase() {
+        fav.setIcon(R.drawable.starfill);
+    }
+
+    @Override
+    public void movieNotInDatabase() {
+        fav.setIcon(R.drawable.star);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_favorite, menu);
 
-        final MenuItem fav = menu.findItem(R.id.fav);
+        fav = menu.findItem(R.id.fav);
+
+
+        movieDetailPersenter.isFavorite(mMovie.getId());
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -234,9 +245,8 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
         switch (id) {
 
             case R.id.fav:
-
                 movieDetailPersenter.saveMovie(mMovie);
-
+                item.setIcon(R.drawable.starfill);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

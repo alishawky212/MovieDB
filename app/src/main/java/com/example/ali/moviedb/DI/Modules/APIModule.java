@@ -20,6 +20,12 @@ public class APIModule {
 
     @Provides
     @Singleton
+    public String provideBaseUrl() {
+        return BASEURL;
+    }
+
+    @Provides
+    @Singleton
     public OkHttpClient provideClinet (){
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
 
@@ -30,14 +36,11 @@ public class APIModule {
 
     @Provides
     @Singleton
-    public Retrofit provideRetrofit(OkHttpClient okHttpClient) {
+    public Retrofit provideRetrofit(OkHttpClient okHttpClient, String BaseUrl) {
         return new Retrofit.Builder()
-                .baseUrl(BASEURL)
+                .baseUrl(BaseUrl)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
-
-
-
 }

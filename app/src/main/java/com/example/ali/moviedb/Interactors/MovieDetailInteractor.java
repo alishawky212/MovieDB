@@ -1,8 +1,5 @@
 package com.example.ali.moviedb.Interactors;
 
-import android.os.AsyncTask;
-import android.util.Log;
-
 import com.example.ali.moviedb.Contracts.APIServices;
 import com.example.ali.moviedb.Contracts.MovieDetailContracts;
 import com.example.ali.moviedb.Models.Movie;
@@ -13,7 +10,13 @@ import com.example.ali.moviedb.Models.TrailersWrapper;
 import com.example.ali.moviedb.RoomDB.MovieDao;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
+import io.reactivex.MaybeObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,6 +31,7 @@ public class MovieDetailInteractor implements MovieDetailContracts.MovieDetailIn
     APIServices.TrailersService trailersService;
     APIServices.ReviewsService reviewsService;
     MovieDao movieDao;
+    boolean isFound = false;
 
     public MovieDetailInteractor(APIServices.TrailersService trailersService, APIServices.ReviewsService reviewsService, MovieDao movieDao) {
         this.trailersService = trailersService;
@@ -74,18 +78,51 @@ public class MovieDetailInteractor implements MovieDetailContracts.MovieDetailIn
     @Override
     public void saveMovie(final Movie movie) {
 
-        new AsyncTask<Void, Void, Void>() {
+        Executor executor = Executors.newSingleThreadExecutor();
+
+        executor.execute(new Runnable() {
             @Override
-            protected Void doInBackground(Void... params) {
-                movieDao.insertAll(movie);
-                return null;
+            public void run() {
+                movieDao.insert(movie);
+            }
+        });
+    }
+
+    @Override
+    public void CheckIsFavorite(int id, final OnIsFoundListener isFoundListener) {
+
+        io.reactivex.Maybe<Movie> movieObservable = movieDao.ISFavorit(id)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        movieObservable.subscribe(new MaybeObserver<Movie>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
             }
 
             @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                Log.d("s", "sus");
+            public void onSuccess(Movie movie) {
+                isFoundListener.onFound();
             }
-        }.execute();
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                isFoundListener.onNotFound();
+            }
+        });
+    }
+
+    public boolean isFound() {
+        return isFound;
+    }
+
+    public void setFound(boolean found) {
+        isFound = found;
     }
 }

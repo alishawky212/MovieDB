@@ -15,7 +15,7 @@ import java.util.ArrayList;
  */
 
 public class MovieDetailPresenter implements MovieDetailContracts.MovieDetailPersenter, MovieDetailContracts.MovieDetailInteractor.OnLoadReviewsFinishedListener,
-        MovieDetailContracts.MovieDetailInteractor.OnLoadTrailersFinishedListener {
+        MovieDetailContracts.MovieDetailInteractor.OnLoadTrailersFinishedListener, MovieDetailContracts.MovieDetailInteractor.OnIsFoundListener {
 
 
     private MovieDetailContracts.MovieDetailView movieDetailView;
@@ -45,9 +45,12 @@ public class MovieDetailPresenter implements MovieDetailContracts.MovieDetailPer
 
     @Override
     public void onDestroy() {
-
         movieDetailView = null;
+    }
 
+    @Override
+    public void isFavorite(int id) {
+        movieDetailInteractor.CheckIsFavorite(id, this);
     }
 
     @Override
@@ -68,5 +71,19 @@ public class MovieDetailPresenter implements MovieDetailContracts.MovieDetailPer
     @Override
     public void onReviewsError() {
         movieDetailView.ShowError("There Error On Fetching Reviews");
+    }
+
+    @Override
+    public void onFound() {
+
+        movieDetailView.onFoundMovieInDataBase();
+
+    }
+
+    @Override
+    public void onNotFound() {
+
+        movieDetailView.movieNotInDatabase();
+
     }
 }

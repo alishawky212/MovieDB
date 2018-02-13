@@ -13,13 +13,15 @@ import java.util.ArrayList;
 public interface MovieDetailContracts {
 
     interface MovieDetailView {
-        void showMovieDetail();
-
         void showTrailers(ArrayList<Trailer> trailers);
 
         void showReviews(ArrayList<Review> reviews);
 
         void ShowError(String Error);
+
+        void onFoundMovieInDataBase();
+
+        void movieNotInDatabase();
     }
 
     interface MovieDetailPersenter {
@@ -32,6 +34,10 @@ public interface MovieDetailContracts {
 
         void onDestroy();
 
+        void isFavorite(int id);
+
+
+
     }
 
     interface MovieDetailInteractor {
@@ -40,6 +46,15 @@ public interface MovieDetailContracts {
         void getReviews(int id, String API, OnLoadReviewsFinishedListener listener);
 
         void saveMovie(Movie movie);
+
+        void CheckIsFavorite(int id, OnIsFoundListener isFoundListener);
+
+        interface OnIsFoundListener {
+
+            void onFound();
+
+            void onNotFound();
+        }
 
         interface OnLoadTrailersFinishedListener {
 

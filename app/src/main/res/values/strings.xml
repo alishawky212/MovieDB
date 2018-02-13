@@ -13,6 +13,7 @@
 
     <string name="description_movie_poster">Contains poster of movie</string>
 
+    <string name="APIKEY"></string>
 
     <string name="heading_release_date">Release Date</string>
     <string name="release_date">10–1–2000</string>
