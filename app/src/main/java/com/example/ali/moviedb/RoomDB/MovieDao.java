@@ -9,6 +9,7 @@ import com.example.ali.moviedb.Models.Movie;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 
 /**
@@ -27,7 +28,7 @@ public interface MovieDao {
 
 
     @Query("SELECT * FROM Movie")
-    List<Movie> getAll();
+    Flowable<List<Movie>> getAll();
 
     @Delete
     void delete(Movie movie);

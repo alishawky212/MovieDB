@@ -1,8 +1,14 @@
 package com.example.ali.moviedb.Contracts;
 
 import com.example.ali.moviedb.Models.Movie;
+import com.example.ali.moviedb.Models.MoviesWrapper;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.Flowable;
+import io.reactivex.Single;
+
 
 /**
  * Created by ali on 2/4/2018.
@@ -12,29 +18,30 @@ public interface PosterFragmentMVP {
 
     interface View{
         void showMovies(ArrayList<Movie> movies);
-        void showError();
+
+        void showError(String message);
+
+        boolean checkForInternet();
+
+        String getSortMethod();
     }
 
     interface Presenter {
-        void getMovies();
-
+        void getMovies(String APIKey);
         void onDestroy();
 
-        void updateSharedPreferance(String sortMethod);
+        void setView(View view);
+
+        void getFavoriteMovies();
     }
 
     interface InterActor {
 
-        void getPopularMovies(String ApiKey, OnLoadFinishedListener onLoadFinishedListener);
+        Single<MoviesWrapper> getPopularMovies(String ApiKey);
 
-        void getAverageMovies(String ApiKey, OnLoadFinishedListener onLoadFinishedListener);
+        Single<MoviesWrapper> getAverageMovies(String ApiKey);
 
-        void getMoviesFromDB();
-        interface OnLoadFinishedListener{
+        Flowable<List<Movie>> getMoviesFromDB();
 
-            void onSuccess(ArrayList<Movie> movies);
-
-            void onError();
-        }
     }
 }

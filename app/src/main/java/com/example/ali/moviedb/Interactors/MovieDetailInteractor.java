@@ -13,9 +13,8 @@ import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import io.reactivex.MaybeObserver;
+import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -77,9 +76,7 @@ public class MovieDetailInteractor implements MovieDetailContracts.MovieDetailIn
 
     @Override
     public void saveMovie(final Movie movie) {
-
         Executor executor = Executors.newSingleThreadExecutor();
-
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -89,40 +86,11 @@ public class MovieDetailInteractor implements MovieDetailContracts.MovieDetailIn
     }
 
     @Override
-    public void CheckIsFavorite(int id, final OnIsFoundListener isFoundListener) {
+    public Maybe<Movie> CheckIsFavorite(int id) {
 
-        io.reactivex.Maybe<Movie> movieObservable = movieDao.ISFavorit(id)
+        return movieDao.ISFavorit(id)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        movieObservable.subscribe(new MaybeObserver<Movie>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onSuccess(Movie movie) {
-                isFoundListener.onFound();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onComplete() {
-                isFoundListener.onNotFound();
-            }
-        });
-    }
-
-    public boolean isFound() {
-        return isFound;
-    }
-
-    public void setFound(boolean found) {
-        isFound = found;
     }
 }

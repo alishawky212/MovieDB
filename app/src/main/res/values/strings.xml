@@ -13,7 +13,7 @@
 
     <string name="description_movie_poster">Contains poster of movie</string>
 
-    <string name="APIKEY"></string>
+
 
     <string name="heading_release_date">Release Date</string>
     <string name="release_date">10–1–2000</string>
@@ -29,4 +29,5 @@
     <string name="no_release_date_found">No release date found</string>
 
     <string name="fav_menu">Favorite</string>
+    <string name="favorite">Favorite</string>
 </resources>

@@ -1,84 +1,106 @@
 package com.example.ali.moviedb.Persenters;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.example.ali.moviedb.Contracts.PosterFragmentMVP;
 import com.example.ali.moviedb.Models.Movie;
-import com.example.ali.moviedb.R;
+import com.example.ali.moviedb.Models.MoviesWrapper;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.subscribers.DisposableSubscriber;
+
 
 /**
  * Created by ali on 2/4/2018.
  */
 
-public class PosterFragmentPresenter implements PosterFragmentMVP.Presenter,PosterFragmentMVP.InterActor.OnLoadFinishedListener {
+public class PosterFragmentPresenter implements PosterFragmentMVP.Presenter {
 
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
     private PosterFragmentMVP.View view;
     private PosterFragmentMVP.InterActor interActor;
-    private Context context;
 
-    public PosterFragmentPresenter(PosterFragmentMVP.View view, PosterFragmentMVP.InterActor interActor,Context context) {
-        this.view = view;
+    public PosterFragmentPresenter(PosterFragmentMVP.InterActor interActor) {
         this.interActor = interActor;
-        this.context = context;
     }
 
     @Override
-    public void getMovies() {
+    public void getMovies(String APIKEY) {
 
-        if (isNetworkAvailable())
+        if (view.checkForInternet())
         {
-            switch (getSortMethod()) {
+            switch (view.getSortMethod()) {
                 case "vote_average.desc":
-                    interActor.getAverageMovies(context.getString(R.string.APIKEY), this);
+                    compositeDisposable.add(interActor.getAverageMovies(APIKEY)
+                            .subscribeWith(new DisposableSingleObserver<MoviesWrapper>() {
+                                @Override
+                                public void onSuccess(MoviesWrapper moviesWrapper) {
+                                    view.showMovies((ArrayList<Movie>) moviesWrapper.getResults());
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    view.showError(e.getMessage());
+                                }
+                            }));
                     break;
                 case "popularity.desc":
-                    interActor.getPopularMovies(context.getString(R.string.APIKEY), this);
+                    compositeDisposable.add(interActor.getPopularMovies(APIKEY)
+                            .subscribeWith(new DisposableSingleObserver<MoviesWrapper>() {
+                                @Override
+                                public void onSuccess(MoviesWrapper moviesWrapper) {
+                                    view.showMovies((ArrayList<Movie>) moviesWrapper.getResults());
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    view.showError(e.getMessage());
+                                }
+                            }));
+
                     break;
             }
+        } else {
+            view.showError("Check your Internet");
         }
 
     }
 
     @Override
     public void onDestroy() {
+        compositeDisposable.clear();
         view = null;
     }
 
     @Override
-    public void updateSharedPreferance(String sortMethod) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(context.getString(R.string.pref_sort_method_key), sortMethod);
-        editor.apply();
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-    private String getSortMethod() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPreferences.getString(context.getString(R.string.pref_sort_method_key),
-                context.getString(R.string.tmdb_sort_pop_desc));
+    public void setView(PosterFragmentMVP.View view) {
+        this.view = view;
     }
 
     @Override
-    public void onSuccess(ArrayList<Movie> movies) {
-        view.showMovies(movies);
-    }
+    public void getFavoriteMovies() {
 
-    @Override
-    public void onError() {
-        view.showError();
+        compositeDisposable.add(interActor.getMoviesFromDB()
+                .subscribeWith(new DisposableSubscriber<List<Movie>>() {
+                    @Override
+                    public void onNext(List<Movie> movies) {
+                        if (view.getSortMethod().equalsIgnoreCase("Favorite"))
+                            view.showMovies((ArrayList<Movie>) movies);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        view.showError(t.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.d("onComplete", "onComplete");
+                    }
+                }));
     }
 }

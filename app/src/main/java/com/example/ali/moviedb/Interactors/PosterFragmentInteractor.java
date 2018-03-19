@@ -4,12 +4,14 @@ import com.example.ali.moviedb.Contracts.APIServices;
 import com.example.ali.moviedb.Contracts.PosterFragmentMVP;
 import com.example.ali.moviedb.Models.Movie;
 import com.example.ali.moviedb.Models.MoviesWrapper;
+import com.example.ali.moviedb.RoomDB.MovieDao;
 
-import java.util.ArrayList;
+import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.Flowable;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by ali on 2/4/2018.
@@ -20,57 +22,38 @@ public class PosterFragmentInteractor implements PosterFragmentMVP.InterActor {
 
     APIServices.TMDbPopular tmDbPopular;
     APIServices.TMDbServiceTopRated tmDbServiceTopRated;
+    MovieDao movieDao;
 
-    public PosterFragmentInteractor(APIServices.TMDbPopular tmDbPopular, APIServices.TMDbServiceTopRated tmDbServiceTopRated) {
+    public PosterFragmentInteractor(APIServices.TMDbPopular tmDbPopular, APIServices.TMDbServiceTopRated tmDbServiceTopRated, MovieDao movieDao) {
         this.tmDbPopular = tmDbPopular;
         this.tmDbServiceTopRated = tmDbServiceTopRated;
+        this.movieDao = movieDao;
     }
 
     @Override
-    public void getPopularMovies(String API ,final OnLoadFinishedListener listener) {
+    public Single<MoviesWrapper> getPopularMovies(String API) {
 
-        Call<MoviesWrapper> call = tmDbPopular.getMovies(API);
 
-        call.enqueue(new Callback<MoviesWrapper>() {
-            @Override
-            public void onResponse(Call<MoviesWrapper> call, Response<MoviesWrapper> response) {
-
-                ArrayList<Movie> movies = (ArrayList<Movie>) response.body().getResults();
-
-                listener.onSuccess(movies);
-            }
-
-            @Override
-            public void onFailure(Call<MoviesWrapper> call, Throwable t) {
-                listener.onError();
-            }
-        });
+        return tmDbPopular.getMovies(API)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io());
     }
 
     @Override
-    public void getAverageMovies(String API, final OnLoadFinishedListener listener) {
+    public Single<MoviesWrapper> getAverageMovies(String API) {
 
-        Call<MoviesWrapper> call = tmDbServiceTopRated.getMovies(API);
-
-        call.enqueue(new Callback<MoviesWrapper>() {
-            @Override
-            public void onResponse(Call<MoviesWrapper> call, Response<MoviesWrapper> response) {
-                ArrayList<Movie> movies = (ArrayList<Movie>) response.body().getResults();
-
-                listener.onSuccess(movies);
-            }
-
-            @Override
-            public void onFailure(Call<MoviesWrapper> call, Throwable t) {
-                listener.onError();
-            }
-        });
-
+        return tmDbServiceTopRated.getMovies(API)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
 
     }
 
     @Override
-    public void getMoviesFromDB() {
+    public Flowable<List<Movie>> getMoviesFromDB() {
+
+        return movieDao.getAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
 
     }
 }

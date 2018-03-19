@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.example.ali.moviedb.Adapters.ReviewAdapter;
 import com.example.ali.moviedb.Adapters.TrailerAdapter;
 import com.example.ali.moviedb.Contracts.MovieDetailContracts;
+import com.example.ali.moviedb.DI.Components.DaggerMovieDetailComponent;
 import com.example.ali.moviedb.DI.Modules.MovieDetailFragmentModule;
 import com.example.ali.moviedb.Models.Movie;
 import com.example.ali.moviedb.Models.Review;
@@ -81,7 +82,6 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
             AlertDialog dialog;
 
             switch (v.getId()) {
-
                 case R.id.linear_layout_trailers:
                     TrailerAdapter trailerAdapter = new TrailerAdapter(getActivity(), mTrailers);
 
@@ -91,7 +91,6 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
                                 public void onClick(DialogInterface dialog, int which) {
                                     Trailer trailer = mTrailers.get(which);
                                     String uri = "http://www.youtube.com/watch?v=" + trailer.getKey();
-
                                     startActivity(new Intent(Intent.ACTION_VIEW,
                                             Uri.parse(uri)));
                                 }
@@ -122,7 +121,10 @@ public class MovieDetailFragment extends Fragment implements MovieDetailContract
 
         setHasOptionsMenu(true);
 
-        MyApplication.getInstance().getComponent().plus(new MovieDetailFragmentModule(this, getActivity())).inject(this);
+        DaggerMovieDetailComponent.builder()
+                .aPPComponent(MyApplication.getInstance().getComponent())
+                .movieDetailFragmentModule(new MovieDetailFragmentModule(this, getActivity()))
+                .build().inject(this);
 
         Bundle arguments = getArguments();
         String key = getString(R.string.parcel_movie);

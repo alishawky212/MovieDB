@@ -10,12 +10,14 @@ import com.example.ali.moviedb.R;
 
 import java.util.ArrayList;
 
+import io.reactivex.observers.DisposableMaybeObserver;
+
 /**
  * Created by ali on 2/6/2018.
  */
 
 public class MovieDetailPresenter implements MovieDetailContracts.MovieDetailPersenter, MovieDetailContracts.MovieDetailInteractor.OnLoadReviewsFinishedListener,
-        MovieDetailContracts.MovieDetailInteractor.OnLoadTrailersFinishedListener, MovieDetailContracts.MovieDetailInteractor.OnIsFoundListener {
+        MovieDetailContracts.MovieDetailInteractor.OnLoadTrailersFinishedListener {
 
 
     private MovieDetailContracts.MovieDetailView movieDetailView;
@@ -50,7 +52,23 @@ public class MovieDetailPresenter implements MovieDetailContracts.MovieDetailPer
 
     @Override
     public void isFavorite(int id) {
-        movieDetailInteractor.CheckIsFavorite(id, this);
+        movieDetailInteractor.CheckIsFavorite(id)
+                .subscribeWith(new DisposableMaybeObserver<Movie>() {
+                    @Override
+                    public void onSuccess(Movie movie) {
+                        movieDetailView.onFoundMovieInDataBase();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        movieDetailView.movieNotInDatabase();
+                    }
+                });
     }
 
     @Override
@@ -73,17 +91,4 @@ public class MovieDetailPresenter implements MovieDetailContracts.MovieDetailPer
         movieDetailView.ShowError("There Error On Fetching Reviews");
     }
 
-    @Override
-    public void onFound() {
-
-        movieDetailView.onFoundMovieInDataBase();
-
-    }
-
-    @Override
-    public void onNotFound() {
-
-        movieDetailView.movieNotInDatabase();
-
-    }
 }

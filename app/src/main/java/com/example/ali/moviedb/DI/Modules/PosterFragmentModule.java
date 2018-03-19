@@ -1,16 +1,12 @@
 package com.example.ali.moviedb.DI.Modules;
 
-import android.content.Context;
 
-import com.example.ali.moviedb.Adapters.PosterAdapter;
 import com.example.ali.moviedb.Contracts.APIServices;
 import com.example.ali.moviedb.Contracts.PosterFragmentMVP;
 import com.example.ali.moviedb.DI.Scopes.PosterFragmentScope;
 import com.example.ali.moviedb.Interactors.PosterFragmentInteractor;
-import com.example.ali.moviedb.Models.Movie;
 import com.example.ali.moviedb.Persenters.PosterFragmentPresenter;
-
-import java.util.ArrayList;
+import com.example.ali.moviedb.RoomDB.MovieDao;
 
 import dagger.Module;
 import dagger.Provides;
@@ -24,49 +20,26 @@ import retrofit2.Retrofit;
 @Module
 public class PosterFragmentModule {
 
-    PosterFragmentMVP.View view;
-    Context mContext;
 
-    public PosterFragmentModule(PosterFragmentMVP.View view,Context mContext) {
-        this.view = view;
-        this.mContext = mContext;
+    @PosterFragmentScope
+    @Provides
+    public PosterFragmentPresenter providePresenter(PosterFragmentMVP.InterActor interActor) {
+        return new PosterFragmentPresenter(interActor);
+    }
+
+
+    @PosterFragmentScope
+    @Provides
+    public PosterFragmentInteractor provideInteractor(APIServices.TMDbPopular tmDbPopular, APIServices.TMDbServiceTopRated tmDbServiceTopRated, MovieDao movieDao) {
+        return new PosterFragmentInteractor(tmDbPopular, tmDbServiceTopRated, movieDao);
     }
 
     @PosterFragmentScope
     @Provides
-    public PosterFragmentPresenter providePresenter(PosterFragmentMVP.View view , PosterFragmentMVP.InterActor interActor){
-        return new PosterFragmentPresenter(view,interActor,mContext);
+    public PosterFragmentMVP.Presenter providePresenterInterface(APIServices.TMDbPopular tmDbPopular, APIServices.TMDbServiceTopRated tmDbServiceTopRated, MovieDao movieDao) {
+        return providePresenter(provideInteractor(tmDbPopular, tmDbServiceTopRated, movieDao));
     }
 
-    @PosterFragmentScope
-    @Provides
-    public PosterFragmentMVP.View provideView(){
-        return view;
-    }
-
-    @PosterFragmentScope
-    @Provides
-    public PosterFragmentInteractor provideInteractor(APIServices.TMDbPopular tmDbPopular,APIServices.TMDbServiceTopRated tmDbServiceTopRated){
-        return new PosterFragmentInteractor(tmDbPopular,tmDbServiceTopRated);
-    }
-
-    @PosterFragmentScope
-    @Provides
-    public PosterFragmentMVP.Presenter providePresenterInterface(APIServices.TMDbPopular tmDbPopular,APIServices.TMDbServiceTopRated tmDbServiceTopRated){
-        return providePresenter(view,provideInteractor(tmDbPopular,tmDbServiceTopRated));
-    }
-
-    @Provides
-    @PosterFragmentScope
-    Context provideContext() {
-        return mContext;
-    }
-
-    @Provides
-    @PosterFragmentScope
-    public PosterAdapter provideAdapter(){
-        return new PosterAdapter(mContext,new ArrayList<Movie>());
-    }
 
     @Provides
     @PosterFragmentScope

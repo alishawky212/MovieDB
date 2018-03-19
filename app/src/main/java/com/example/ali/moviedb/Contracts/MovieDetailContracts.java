@@ -6,6 +6,8 @@ import com.example.ali.moviedb.Models.Trailer;
 
 import java.util.ArrayList;
 
+import io.reactivex.Maybe;
+
 /**
  * Created by ali on 2/6/2018.
  */
@@ -47,7 +49,7 @@ public interface MovieDetailContracts {
 
         void saveMovie(Movie movie);
 
-        void CheckIsFavorite(int id, OnIsFoundListener isFoundListener);
+        Maybe<Movie> CheckIsFavorite(int id);
 
         interface OnIsFoundListener {
 

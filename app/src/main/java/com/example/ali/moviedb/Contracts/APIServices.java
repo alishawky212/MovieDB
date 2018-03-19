@@ -4,6 +4,7 @@ import com.example.ali.moviedb.Models.MoviesWrapper;
 import com.example.ali.moviedb.Models.ReviewsWrapper;
 import com.example.ali.moviedb.Models.TrailersWrapper;
 
+import io.reactivex.Single;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -17,13 +18,13 @@ public interface APIServices {
 
     interface TMDbPopular {
         @GET("/3/movie/popular")
-        Call<MoviesWrapper> getMovies(
+        Single<MoviesWrapper> getMovies(
                 @Query("api_key") String apiKey);
     }
 
     interface TMDbServiceTopRated {
         @GET("/3/movie/top_rated")
-        Call<MoviesWrapper> getMovies(
+        Single<MoviesWrapper> getMovies(
                 @Query("api_key") String apiKey);
     }
     interface TrailersService {

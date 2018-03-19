@@ -1,8 +1,14 @@
 package com.example.ali.moviedb.Views;
 
-import android.app.Fragment;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,6 +22,7 @@ import android.widget.Toast;
 import com.example.ali.moviedb.Adapters.PosterAdapter;
 import com.example.ali.moviedb.Contracts.OnPosterSelectedListener;
 import com.example.ali.moviedb.Contracts.PosterFragmentMVP;
+import com.example.ali.moviedb.DI.Components.DaggerPosterFragmentComponent;
 import com.example.ali.moviedb.DI.Modules.PosterFragmentModule;
 import com.example.ali.moviedb.Models.Movie;
 import com.example.ali.moviedb.MyApplication;
@@ -41,7 +48,6 @@ public class PosterFragment extends Fragment implements PosterFragmentMVP.View{
     @Inject
     PosterFragmentMVP.Presenter presenter;
 
-    @Inject
     PosterAdapter adapter;
 
 
@@ -51,7 +57,12 @@ public class PosterFragment extends Fragment implements PosterFragmentMVP.View{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MyApplication.getInstance().getComponent().plus(new PosterFragmentModule(this,getActivity())).inject(this);
+        DaggerPosterFragmentComponent.builder()
+                .aPPComponent(MyApplication.getInstance().getComponent())
+                .posterFragmentModule(new PosterFragmentModule())
+                .build().inject(this);
+
+        presenter.setView(this);
 
         setHasOptionsMenu(true);
 
@@ -60,9 +71,7 @@ public class PosterFragment extends Fragment implements PosterFragmentMVP.View{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.movie_overview, container, false);
-
-        return rootView;
+        return inflater.inflate(R.layout.movie_overview, container, false);
     }
 
     @Override
@@ -70,6 +79,8 @@ public class PosterFragment extends Fragment implements PosterFragmentMVP.View{
         super.onViewCreated(view, savedInstanceState);
 
         ButterKnife.bind(this,view);
+
+        adapter = new PosterAdapter(getActivity(), new ArrayList<Movie>());
 
         mGridView.setAdapter(adapter);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -87,9 +98,16 @@ public class PosterFragment extends Fragment implements PosterFragmentMVP.View{
             List<Movie> movieList = savedInstanceState.getParcelableArrayList("movies");
             adapter.updateData(movieList);
         } else {
-            presenter.getMovies();
+            presenter.getMovies(getActivity().getString(R.string.APIKEY));
         }
 
+    }
+
+    public void updateSharedPreferance(String sortMethod) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(getActivity().getString(R.string.pref_sort_method_key), sortMethod);
+        editor.apply();
     }
 
     @Override
@@ -109,19 +127,18 @@ public class PosterFragment extends Fragment implements PosterFragmentMVP.View{
 
         switch (item.getItemId()) {
             case R.id.popl:
-                presenter.updateSharedPreferance(getString(R.string.tmdb_sort_pop_desc));
-                presenter.getMovies();
+                updateSharedPreferance(getString(R.string.tmdb_sort_pop_desc));
+                presenter.getMovies(getActivity().getString(R.string.APIKEY));
                 return true;
 
             case R.id.rate:
-                presenter.updateSharedPreferance(getString(R.string.tmdb_sort_top_desc));
-                presenter.getMovies();
+                updateSharedPreferance(getString(R.string.tmdb_sort_top_desc));
+                presenter.getMovies(getActivity().getString(R.string.APIKEY));
                 return true;
 
             case R.id.favor:
-//                updateSharedPrefrence(getString(R.string.favorite));
-//                new FetchFavoriteMoviesTask(getActivity()).execute();
-
+                updateSharedPreferance(getString(R.string.favorite));
+                presenter.getFavoriteMovies();
 
         }
         return super.onOptionsItemSelected(item);
@@ -134,9 +151,24 @@ public class PosterFragment extends Fragment implements PosterFragmentMVP.View{
     }
 
     @Override
-    public void showError() {
-        Toast.makeText(getActivity(),"There Is Error Occurred",Toast.LENGTH_SHORT).show();
+    public void showError(String message) {
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
 
+    }
+
+    @Override
+    public boolean checkForInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    @Override
+    public String getSortMethod() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        return sharedPreferences.getString(getActivity().getString(R.string.pref_sort_method_key),
+                getActivity().getString(R.string.tmdb_sort_pop_desc));
     }
 
     @Override
